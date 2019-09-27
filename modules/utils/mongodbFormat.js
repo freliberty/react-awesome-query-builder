@@ -41,6 +41,9 @@ export const mongodbFormat = (item, config, _not = false) => {
             resultQuery[mongoConj] = list.toList();
         }
 
+        if(typeof conjunctionDefinition.mongoConjFormat !== 'undefined'){
+            return conjunctionDefinition.mongoConjFormat(resultQuery);
+        }
         return resultQuery;
     } else if (type === 'rule') {
         let operator = properties.get('operator');

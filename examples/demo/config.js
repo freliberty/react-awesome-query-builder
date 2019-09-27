@@ -1,4 +1,5 @@
 import React from 'react';
+import { Map } from 'immutable';
 import { Widgets, Operators } from 'react-awesome-query-builder';
 
 const {
@@ -42,6 +43,33 @@ export default {
                     : (not ? "NOT (" : "") + children.first() + (not ? ")" : "");
             },
         },
+        ANDSUBDOC: {
+            label: 'Same',
+            mongoConj: '$elemMatch',
+            mongoConjFormat: (elem) => {
+                const attr = [];
+                let myList = Map();
+                elem['$elemMatch'].forEach((item) => {
+                    const key =Object.keys(item)[0];
+                    const arraykey = key.split('.');
+                    attr.push(arraykey[0]);
+                    const newkey= arraykey.splice(1).join('.');
+                    myList = myList.set(newkey, item[key]);
+                });
+                let group = attr[0];
+                const result = new Object();
+                result[group] = {'$elemMatch' : myList};
+                console.log('config::result -> ', result);
+                return result;
+            },
+            reversedConj: 'ANDSUBDOC',
+            formatConj: (children, conj, not, isForDisplay) => {
+                return children.size > 1 ?
+                    (not ? "NOT " : "") + '(' + children.join(' ' + (isForDisplay ? "AND" : "||") + ' ') + ')'
+                    : (not ? "NOT (" : "") + children.first() + (not ? ")" : "");
+            },
+        },
+
     },
     fields: {
         members: {
@@ -49,17 +77,16 @@ export default {
             type: '!struct',
             subfields: {
                 subname: {
-                    //label: 'Subname', //'subname' should be used instead
-                    label2: 'MemberName', //only for menu's toggler
+                    label: 'subname', //'subname' should be used instead
                     type: 'text',
-                    tableName: 't1',
                     operators: ['equal'],
                 },
-                prox1: {
-                    label: 'prox1',
+                numbbb: {
+                    label: 'nummbb',
                     type: 'text',
-                    operators: ['proximity'],
+                    operators: ['equal'],
                 },
+
             }
         },
         prox2: {
