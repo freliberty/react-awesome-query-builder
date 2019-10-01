@@ -47,9 +47,9 @@ var mongodbFormat = exports.mongodbFormat = function mongodbFormat(item, config)
             conjunctionDefinition = config.conjunctions[conjunction];
         }
         var mongoConj = conjunctionDefinition.mongoConj;
-
+        var notChild = conjunction !== 'ANDSUBDOC' && not ? not : false;
         var list = children.map(function (currentChild) {
-            return mongodbFormat(currentChild, config, not);
+            return mongodbFormat(currentChild, config, notChild);
         }).filter(function (currentChild) {
             return typeof currentChild !== 'undefined';
         });
@@ -62,7 +62,7 @@ var mongodbFormat = exports.mongodbFormat = function mongodbFormat(item, config)
         }
 
         if (typeof conjunctionDefinition.mongoConjFormat !== 'undefined') {
-            return conjunctionDefinition.mongoConjFormat(resultQuery);
+            return conjunctionDefinition.mongoConjFormat(resultQuery, not);
         }
         return resultQuery;
     } else if (type === 'rule') {
