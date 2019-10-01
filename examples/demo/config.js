@@ -46,7 +46,7 @@ export default {
         ANDSUBDOC: {
             label: 'Same',
             mongoConj: '$elemMatch',
-            mongoConjFormat: (elem) => {
+            mongoConjFormat: (elem, not) => {
                 const attr = [];
                 let myList = Map();
                 elem['$elemMatch'].forEach((item) => {
@@ -58,6 +58,13 @@ export default {
                 });
                 let group = attr[0];
                 const result = new Object();
+                console.log('config::not -> ', not);
+                if (not) {
+                    result[group] = {'$not' : {'$elemMatch' : myList}};
+                    console.log('config::result -> ', result);
+                    return result;
+                }
+
                 result[group] = {'$elemMatch' : myList};
                 console.log('config::result -> ', result);
                 return result;

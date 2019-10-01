@@ -26,10 +26,10 @@ export const mongodbFormat = (item, config, _not = false) => {
             conjunctionDefinition = config.conjunctions[conjunction];
         }
         const mongoConj = conjunctionDefinition.mongoConj;
-
+        const notChild =  conjunction !=='ANDSUBDOC' && not ? not : false;
         const list = children
             .map((currentChild) => {
-                return mongodbFormat(currentChild, config, not)
+                return mongodbFormat(currentChild, config, notChild)
             })
             .filter((currentChild) => typeof currentChild !== 'undefined')
         if (!list.size)
@@ -42,7 +42,7 @@ export const mongodbFormat = (item, config, _not = false) => {
         }
 
         if(typeof conjunctionDefinition.mongoConjFormat !== 'undefined'){
-            return conjunctionDefinition.mongoConjFormat(resultQuery);
+            return conjunctionDefinition.mongoConjFormat(resultQuery, not);
         }
         return resultQuery;
     } else if (type === 'rule') {
